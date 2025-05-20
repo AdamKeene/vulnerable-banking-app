@@ -1,6 +1,6 @@
 package com.bank.repository;
 
-import com.yourname.bank.model.Customer;
+import com.bank.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
