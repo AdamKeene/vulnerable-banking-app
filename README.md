@@ -40,8 +40,10 @@ The goal of the project is to demonstrate understanding of full-stack developmen
 ## Technical Notes
 
 - We are developing it as  a **web app** (Spring Boot).
+- N-Layer architecture is used to handle logic and testing at different layers
 - Use a database to store user and transaction data (H2).
 - Focus on usability, error handling, and secure coding practices.
+
 
 ---
 
