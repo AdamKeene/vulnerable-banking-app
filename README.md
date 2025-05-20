@@ -37,7 +37,7 @@ The goal of the project is to demonstrate understanding of full-stack developmen
 
 ---
 
-## 💡 Technical Notes
+## Technical Notes
 
 - We are developing it as  a **web app** (Spring Boot).
 - Use a database to store user and transaction data (H2).
@@ -45,7 +45,7 @@ The goal of the project is to demonstrate understanding of full-stack developmen
 
 ---
 
-## 🎓 Educational Objectives
+## Educational Objectives
 
 Through this project, you will demonstrate:
 
