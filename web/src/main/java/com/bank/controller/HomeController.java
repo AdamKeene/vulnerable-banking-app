@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.math.BigDecimal;
+import java.security.Principal;
 
 @Controller
 public class HomeController {
@@ -64,7 +66,34 @@ public class HomeController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard() {
-        return "dashboard";
+    public String showDashboard(Model model, Principal principal) {
+        Customer customer = customerService.findByUsername(principal.getName());
+        model.addAttribute("balance", customer.getBalance());
+        model.addAttribute("username", customer.getUsername());
+        return "dashboard"; // will render dashboard.html
+    }
+
+    @PostMapping("/deposit")
+    public String deposit(@RequestParam BigDecimal amount, Principal principal, RedirectAttributes redirectAttributes) {
+        Customer customer = customerService.findByUsername(principal.getName());
+        customer.setBalance(customer.getBalance().add(amount));
+        customerService.save(customer);
+        redirectAttributes.addFlashAttribute("success", "Deposit successful!");
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/withdraw")
+    public String withdraw(@RequestParam BigDecimal amount, Principal principal, RedirectAttributes redirectAttributes) {
+        Customer customer = customerService.findByUsername(principal.getName());
+
+        if (customer.getBalance().compareTo(amount) < 0) {
+            redirectAttributes.addFlashAttribute("error", "Insufficient funds.");
+            return "redirect:/dashboard";
+        }
+
+        customer.setBalance(customer.getBalance().subtract(amount));
+        customerService.save(customer);
+        redirectAttributes.addFlashAttribute("success", "Withdrawal successful!");
+        return "redirect:/dashboard";
     }
 } 

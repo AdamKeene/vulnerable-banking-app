@@ -32,6 +32,11 @@ public class CustomerService implements UserDetailsService {
             .build();
     }
 
+    public Customer findByUsername(String username) {
+        return customerRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Customer not found"));
+    }
+
     public Customer registerNewCustomer(String username, String password) {
         if (customerRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username already exists");
@@ -40,7 +45,7 @@ public class CustomerService implements UserDetailsService {
         Customer customer = new Customer();
         customer.setUsername(username);
         customer.setPassword(passwordEncoder.encode(password));
-        customer.setBalance(new BigDecimal("0.00"));
+        customer.setBalance(new BigDecimal("404.00")); // make sure that user has an initial balance
         
         return customerRepository.save(customer);
     }
@@ -54,5 +59,9 @@ public class CustomerService implements UserDetailsService {
         }
 
         return customer;
+    }
+
+    public void save(Customer customer) {
+        customerRepository.save(customer);
     }
 } 

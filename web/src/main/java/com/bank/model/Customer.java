@@ -25,7 +25,7 @@ public class Customer {
     public Customer(String username, String password, BigDecimal balance) {
         this.username = username;
         this.password = password;
-        this.balance = balance;
+        this.balance = balance; // default value be 404 dollars?
     }
 
     // Getters and Setters

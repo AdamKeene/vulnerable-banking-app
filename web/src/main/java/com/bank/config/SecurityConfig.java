@@ -15,9 +15,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())  // Disable CSRF for now
+            .csrf(csrf -> csrf.disable())  // Disable CSRF for now//
+            .headers(headers -> headers // we can take this out later but for right now its to test the sql queries
+                    .frameOptions(frameOptions -> frameOptions.disable())
+            )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/register", "/login", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
