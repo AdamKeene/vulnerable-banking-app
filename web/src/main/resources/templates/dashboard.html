@@ -13,7 +13,7 @@
 
     <!-- Centered Welcome Message -->
     <div class="container mt-5 text-center">
-        <h1 class="display-4">Welcome to Your Dashboard, <span th:text="${#strings.capitalize(username)}">User</span>!</h1>
+        <h1 class="display-4">Welcome to Your Dashboard, <span th:utext="${username}">User</span>!</h1>
         <p class="lead">Manage your money without getting hacked (Maybe).</p>
     </div>
 
@@ -36,7 +36,7 @@
                         <h4>Your Current Balance</h4>
                     </div>
                     <div class="card-body text-center">
-                        <h2 th:text="${balance} + ' USD'">404.00 USD</h2>
+                        <h2 th:text="${#numbers.formatDecimal(balance, 0, 'UNLIMITED')} + ' USD'"></h2>
                     </div>
                 </div>
             </div>

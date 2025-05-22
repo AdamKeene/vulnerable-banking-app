@@ -12,6 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Service
 public class CustomerService implements UserDetailsService {
@@ -46,8 +51,29 @@ public class CustomerService implements UserDetailsService {
     }
 
     public Customer findByUsername(String username) {
-        return customerRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Customer not found"));
+        Customer customer = null;
+        String url = "jdbc:h2:~/bankdb";
+        String user = "sa";
+        String pass = "";
+
+        String sql = "SELECT * FROM customers WHERE username = '" + username + "'";
+
+        try (Connection conn = DriverManager.getConnection(url, user, pass);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                customer = new Customer();
+                customer.setUsername(rs.getString("username"));
+                customer.setPassword(rs.getString("password"));
+                customer.setBalance(rs.getBigDecimal("balance"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return customer;
     }
 
     public Customer registerNewCustomer(String username, String password) {
