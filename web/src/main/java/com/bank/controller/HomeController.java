@@ -85,6 +85,12 @@ public class HomeController {
     @GetMapping("/dashboard")
     public String showDashboard(Model model, Principal principal) {
         Customer customer = customerService.findByUsername(principal.getName());
+
+        if (customer == null) {
+            model.addAttribute("error", "User not found");
+            return "error"; // or redirect to login page
+        }
+
         model.addAttribute("balance", customer.getBalance());
         model.addAttribute("username", customer.getUsername());
         return "dashboard"; // will render dashboard.html

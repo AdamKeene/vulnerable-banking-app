@@ -52,7 +52,7 @@ public class CustomerService implements UserDetailsService {
 
     public Customer findByUsername(String username) {
         Customer customer = null;
-        String url = "jdbc:h2:~/bankdb";
+        String url = "jdbc:h2:file:./data/bankdb";
         String user = "sa";
         String pass = "";
 
