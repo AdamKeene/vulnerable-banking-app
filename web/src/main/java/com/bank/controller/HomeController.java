@@ -26,11 +26,19 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(@RequestParam(required = false) String error,
+                       @RequestParam(required = false) String username,
+                       Model model) {
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated() &&
             !SecurityContextHolder.getContext().getAuthentication().getName().equals("anonymousUser")) {
             return "redirect:/dashboard";
         }
+        
+        // display last username
+        if (error != null && username != null) {
+            model.addAttribute("lastAttempt", "Last attempt: " + username);
+        }
+
         return "login";
     }
 

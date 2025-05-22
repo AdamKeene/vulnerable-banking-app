@@ -25,6 +25,10 @@ public class SecurityConfig {
             )
             .formLogin(form -> form
                 .loginPage("/login")
+                .failureHandler((request, response, exception) -> {
+                    String username = request.getParameter("username");
+                    response.sendRedirect("/login?error=true&username=" + username);
+                })
                 .defaultSuccessUrl("/dashboard")
                 .permitAll()
             )

@@ -20,6 +20,8 @@
                 </div>
                 <div th:if="${success}" class="alert alert-success" th:text="${success}">
                 </div>
+                <div th:if="${lastAttempt}" class="alert alert-warning" th:utext="${lastAttempt}">
+                </div>
                 <div class="card">
                     <div class="card-header">
                         <h3 class="text-center mb-0">Login</h3>
