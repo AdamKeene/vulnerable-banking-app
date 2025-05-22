@@ -57,9 +57,17 @@ public class HomeController {
             @RequestParam String password,
             @RequestParam String confirmPassword,
             RedirectAttributes redirectAttributes) {
-        
+
+        String validPattern = "^[_\\-\\.0-9a-z]{1,127}$";
+
+        if (!username.matches(validPattern) || !password.matches(validPattern) || !confirmPassword.matches(validPattern)) {
+            redirectAttributes.addFlashAttribute("error", "invalid_input");
+            return "redirect:/register";
+        }
+
+        // Validate password confirmation
         if (!password.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("error", "Passwords do not match");
+            redirectAttributes.addFlashAttribute("error", "invalid_input");
             return "redirect:/register";
         }
 
@@ -67,7 +75,8 @@ public class HomeController {
             customerService.registerNewCustomer(username, password);
             redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
             return "redirect:/login";
-        } catch (RuntimeException e) {
+        }
+        catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/register";
         }
@@ -82,7 +91,18 @@ public class HomeController {
     }
 
     @PostMapping("/deposit")
-    public String deposit(@RequestParam BigDecimal amount, Principal principal, RedirectAttributes redirectAttributes) {
+    public String deposit(@RequestParam String amountStr, Principal principal, RedirectAttributes redirectAttributes) {
+        if (!amountStr.matches("^(0|[1-9][0-9]*)\\.[0-9]{2}$")) {
+            redirectAttributes.addFlashAttribute("error", "invalid_input");
+            return "redirect:/dashboard";
+        }
+
+        BigDecimal amount = new BigDecimal(amountStr);
+        if (amount.compareTo(BigDecimal.ZERO) < 0 || amount.compareTo(new BigDecimal("4294967295.99")) > 0) {
+            redirectAttributes.addFlashAttribute("error", "invalid_input");
+            return "redirect:/dashboard";
+        }
+
         Customer customer = customerService.findByUsername(principal.getName());
         customer.setBalance(customer.getBalance().add(amount));
         customerService.save(customer);
@@ -91,9 +111,25 @@ public class HomeController {
     }
 
     @PostMapping("/withdraw")
-    public String withdraw(@RequestParam BigDecimal amount, Principal principal, RedirectAttributes redirectAttributes) {
+    public String withdraw(@RequestParam String amountStr, Principal principal, RedirectAttributes redirectAttributes) {
+        if (!amountStr.matches("^(0|[1-9][0-9]*)\\.[0-9]{2}$")) {
+            redirectAttributes.addFlashAttribute("error", "invalid_input");
+            return "redirect:/dashboard";
+        }
+
+        BigDecimal amount = new BigDecimal(amountStr);
+
+        // Validate bounds: 0.00 to 4294967295.99
+        BigDecimal min = new BigDecimal("0.00");
+        BigDecimal max = new BigDecimal("4294967295.99");
+        if (amount.compareTo(min) < 0 || amount.compareTo(max) > 0) {
+            redirectAttributes.addFlashAttribute("error", "invalid_input");
+            return "redirect:/dashboard";
+        }
+
         Customer customer = customerService.findByUsername(principal.getName());
 
+        // Check for sufficient funds
         if (customer.getBalance().compareTo(amount) < 0) {
             redirectAttributes.addFlashAttribute("error", "Insufficient funds.");
             return "redirect:/dashboard";
