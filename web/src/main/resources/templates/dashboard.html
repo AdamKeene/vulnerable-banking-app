@@ -13,9 +13,13 @@
 
     <!-- Centered Welcome Message -->
     <div class="container mt-5 text-center">
-        <h1 class="display-4">Welcome to Your Dashboard, <span th:utext="${username}">User</span>!</h1>
+        <!-- changed vulnerable html to now processed html to prevent XSS -->
+        <h1 class="display-4">
+            Welcome to Your Dashboard, <span th:text="${username}">User</span>
+        </h1>
         <p class="lead">Manage your money without getting hacked (Maybe).</p>
     </div>
+
 
     <!-- Preloaded Messages for Errors or Success Queries  -->
     <div th:if="${error}" class="alert alert-danger text-center mt-3">

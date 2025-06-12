@@ -82,6 +82,7 @@ public class HomeController {
         }
     }
 
+    // removed username to prevent IDOR
     @GetMapping("/dashboard")
     public String showDashboard(Model model, Principal principal) {
         Customer customer = customerService.findByUsername(principal.getName());

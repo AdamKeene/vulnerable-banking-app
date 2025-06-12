@@ -50,26 +50,30 @@ public class CustomerService implements UserDetailsService {
             .build();
     }
 
+    // changed to PreparedStatement to prevent SQL injection
     public Customer findByUsername(String username) {
         Customer customer = null;
         String url = "jdbc:h2:file:./data/bankdb";
         String user = "sa";
         String pass = "";
 
-        String sql = "SELECT * FROM customers WHERE username = '" + username + "'";
+        String sql = "SELECT * FROM customers WHERE username = ?";
 
         try (Connection conn = DriverManager.getConnection(url, user, pass);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             var pstmt = conn.prepareStatement(sql)) {
 
-            if (rs.next()) {
-                customer = new Customer();
-                customer.setUsername(rs.getString("username"));
-                customer.setPassword(rs.getString("password"));
-                customer.setBalance(rs.getBigDecimal("balance"));
+            pstmt.setString(1, username);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    customer = new Customer();
+                    customer.setUsername(rs.getString("username"));
+                    customer.setPassword(rs.getString("password"));
+                    customer.setBalance(rs.getBigDecimal("balance"));
+                }
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
